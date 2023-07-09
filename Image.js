@@ -15,6 +15,7 @@ const fs = require('fs');
 const url = `https://graph.facebook.com/v17.0/${process.env.WA_PHONE_NUMBER}/media`;
 
 async function uploadFile(file) {
+    console.log(`Attempting upload of file: ${file}`);
     try {
         const stream = fs.createReadStream(file);
         const bodyFormData = new FormData();
@@ -27,10 +28,10 @@ async function uploadFile(file) {
             }
         });
         console.log(`File: ${file} ---> ${response.data.id}`);
-        return 'OK';
+        return { name: file, id: response.data.id };
     } catch (err) {
         console.log(`File: ${file} ---X ${err.message}`);
-        return 'NOK';
+        return { name: file, id: -1 };
     }
 }
 

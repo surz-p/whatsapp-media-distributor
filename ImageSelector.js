@@ -13,7 +13,7 @@ function getImagesList (path) {
             if (err) {
                 return reject(err);
             }
-            console.log(`ImageSelector found images at "${path}"`, files);
+            console.log(`[ImageSelector] Found images at "${path}"`, files);
             files.forEach((file, idx) => {
                 files[idx] = (path[path.length - 1] === '/') ? (path + files[idx]) : (path + '/' + files[idx]);
             });

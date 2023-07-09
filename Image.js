@@ -15,7 +15,7 @@ const fs = require('fs');
 const url = `https://graph.facebook.com/v17.0/${process.env.WA_PHONE_NUMBER}/media`;
 
 async function uploadFile(file) {
-    console.log(`Attempting upload of file: ${file}`);
+    console.log(`[Image] Attempting upload of file: ${file}`);
     try {
         const stream = fs.createReadStream(file);
         const bodyFormData = new FormData();
@@ -27,10 +27,10 @@ async function uploadFile(file) {
                 Authorization: `Bearer ${process.env.WA_TOKEN}`
             }
         });
-        console.log(`File: ${file} ---> ${response.data.id}`);
+        console.log(`[Image] File: ${file} ---> ${response.data.id}`);
         return { name: file, id: response.data.id };
     } catch (err) {
-        console.log(`File: ${file} ---X ${err.message}`);
+        console.log(`[Image] File: ${file} ---X ${err.message}`);
         return { name: file, id: -1 };
     }
 }

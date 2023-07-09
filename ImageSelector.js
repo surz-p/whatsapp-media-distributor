@@ -11,10 +11,13 @@ function getImagesList (path) {
     return new Promise((resolve, reject) => {
         fs.readdir(path, (err, files) => {
             if (err) {
-                reject(err);
+                return reject(err);
             }
-            console.log('ImageSelector: ', files);
-            resolve(files);
+            console.log(`ImageSelector found images at "${path}"`, files);
+            files.forEach((file, idx) => {
+                files[idx] = (path[path.length - 1] === '/') ? (path + files[idx]) : (path + '/' + files[idx]);
+            });
+            return resolve(files);
         });
     })
 }

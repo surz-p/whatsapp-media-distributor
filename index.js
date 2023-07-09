@@ -1,27 +1,43 @@
 const Image = require('./Image.js');
-const ImageSelector = require('./ImageSelector.js')
+const ImageSelector = require('./ImageSelector.js');
+const FileDumper = require('./FileDumper.js');
 
-// get all images from current folder
-const pwd = __dirname;
-const imagesPath = pwd + '/Wallpapers/';
-let imagesList;
+// get run time stamp for writing log results
+const date = new Date(Date.now());
+const dateFormatted = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+const timeFormatted = `${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
+const timeStampFormatted = dateFormatted + "-" + timeFormatted;
+console.log(`[Main] Process task begin @ ${timeStampFormatted}`);
+
 (async () => {
+    console.time('Process Took');
+    let imagesList = [];
+    const fileUploadPromises = [];
+
     try {
+        // get all images from user defined folder
+        const imagesPath = process.env.WA_PWD;
         imagesList = await ImageSelector.getImagesList(imagesPath);
     } catch (err) {
         console.log(`Error fetching files. Reason: ${err.message}`);
+        console.timeEnd('Process Took');
         process.exit(0);
     }
-})();
 
-// upload images
+    // upload each image from the list of images in directory
+    for(let i = 0; i < imagesList.length; i++) {
+        fileUploadPromises.push(Image.uploadFile(imagesList[i]));
+    }
+    try {
+        result = await Promise.allSettled(fileUploadPromises);
+    } catch (err) {
+        console.log(`Error uploading files. Reason: ${err.message}`);
+        console.timeEnd('Process Took');
+        process.exit(0);
+    }
 
-// get images ids
-
-// function call
-// (async () => {
-//     const resp = await Image.uploadFile('./Wallpapers/bleach.jpg');
-//     if (resp === 'NOK') {
-//         console.log("Ended in upload error");
-//     }
-// })();
+    // log result of upload to local disk
+    FileDumper.dump(timeStampFormatted, result);
+    console.timeEnd('Process Took');
+})()
+.catch(err => { console.log(err); process.exit(0); });
